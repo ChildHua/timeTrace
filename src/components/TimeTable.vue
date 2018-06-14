@@ -1,8 +1,6 @@
 <template>
     <!--<p>取消选择</p>-->
-    <div class="col-md-12">
-        <p>{{this.$store.state.k}}</p>
-        <button @click="test">test</button>
+    <div class="col-md-6">
         <table class="table table-bordered" style="float: right;">
             <tbody>
             <tr v-for="timeTr in tds">
@@ -43,41 +41,6 @@
             end: function (index) {
                 this.$store.commit('renderSelect',index);
                 this.$store.state.k = false
-            },
-            test:function () {
-                console.log(this.$store.state)
-            }
-        }
-    }
-
-    let renderSelect = (index, vm) => {
-        if (!vm.k) {
-            return false;
-        }
-        vm.endIndex = index;
-        let xScope = vm.startIndex[0] > vm.endIndex[0]
-            ? [vm.endIndex[0], vm.startIndex[0]]
-            : [vm.startIndex[0], vm.endIndex[0]];
-        let yScope = vm.startIndex[1] > vm.endIndex[1]
-            ? [vm.endIndex[1], vm.startIndex[1]]
-            : [vm.startIndex[1], vm.endIndex[1]];
-        console.log([xScope, yScope]);
-
-        //init
-        vm.tds.map((tr)=>{
-           tr.map((td)=>{
-               td[2]='white';
-           })
-        });
-
-        for (let i = xScope[0]; i <= xScope[1]; i++) {
-            for (let j = yScope[0]; j <= yScope[1]; j++) {
-                if ((index[0] >= xScope[0] && index[0] <= xScope[1]) && (index[1] >= yScope[0] && index[1] <= yScope[1])) {
-                    vm.tds[i][j][2] = 'red'
-                    console.log(vm.tds[i][j][2]);
-                } else {
-                    vm.tds[i][j][2] = 'white'
-                }
             }
         }
     }

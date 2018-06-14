@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="row" @click.stop="test">
+        <div class="row" @click="init">
             <!--<time-list :time-lists="[1,2,3]"></time-list>-->
             <h1>{{ msg }}</h1>
             <time-table></time-table>
@@ -25,8 +25,9 @@
             }
         },
         methods:{
-            test:()=>{
-                // console.log(11)
+            init:function (){
+                console.log(2);
+                this.$store.commit('init');
             }
         }
     }

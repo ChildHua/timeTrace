@@ -1,6 +1,6 @@
 <template>
-    <td :class="props.class" @click.stop  @mousedown.left="$emit('emit-down',[props.x,props.y])" @mouseup.left="$emit('emit-up',[props.x,props.y])"
-        @mouseover.capture="$emit('emit-over',[props.x,props.y])">
+    <td :class="props.class" @click.stop  @mousedown.stop.left="$emit('emit-down',[props.x,props.y])" @mouseup.stop.left="$emit('emit-up',[props.x,props.y])"
+        @mouseover.stop="$emit('emit-over',[props.x,props.y])">
         <slot>
 
         </slot>

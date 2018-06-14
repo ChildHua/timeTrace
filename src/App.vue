@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div id="app" @click="init">
         <img src="./assets/logo.png">
         <router-view/>
     </div>
@@ -11,6 +11,11 @@
         data:function() {
             return {
                 aTest:this.$store.state.tds
+            }
+        },
+        methods:{
+            init:function () {
+                this.$store.commit('init')
             }
         }
     }

@@ -21,7 +21,7 @@ const store = new Vuex.Store({
             for (let i = 0; i < y; i++) {
                 let tmp = [];
                 for (let j = 0; j < x; j++) {
-                    tmp.push({x:i, y:j, class:'white'})
+                    tmp.push({x:i, y:j, class:'white',selected:false})
                 }
                 tds.push(tmp)
             }
@@ -38,6 +38,14 @@ const store = new Vuex.Store({
         setYScope(state, YScope) {
             state.endIndex = YScope
         },
+        init(state){
+            //init
+            state.tds.map((tr) => {
+                tr.map((td) => {
+                    td.class = 'white';
+                })
+            });
+        },
         renderSelect(state, index) {
             if (!state.k) {
                 return false;
@@ -50,13 +58,6 @@ const store = new Vuex.Store({
                 ? [state.endIndex[1], state.startIndex[1]]
                 : [state.startIndex[1], state.endIndex[1]];
             // console.log([xScope, yScope]);
-
-            //init
-            state.tds.map((tr) => {
-                tr.map((td) => {
-                    td.class = 'white';
-                })
-            });
 
             for (let i = xScope[0]; i <= xScope[1]; i++) {
                 for (let j = yScope[0]; j <= yScope[1]; j++) {
@@ -77,4 +78,4 @@ new Vue({
     router,
     components: {App},
     template: '<App/>'
-})
+});
