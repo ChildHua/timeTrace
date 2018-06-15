@@ -15,7 +15,7 @@
         },
         methods:{
             init:function () {
-                this.$store.commit('init')
+                // this.$store.commit('init')
             }
         }
     }

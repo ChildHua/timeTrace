@@ -1,9 +1,10 @@
 <template>
     <div class="container">
-        <div class="row" @click="init">
+        <div class="row" @click.self="init">
             <!--<time-list :time-lists="[1,2,3]"></time-list>-->
             <h1>{{ msg }}</h1>
             <time-table></time-table>
+            <time-tag></time-tag>
         </div>
     </div>
 </template>
@@ -11,11 +12,13 @@
 <script>
     import TimeList from './TimeList.vue';
     import TimeTable from './TimeTable.vue';
+    import TimeTag from './TimeTag.vue';
     export default {
         name: 'HelloWorld',
         components: {
             TimeTable,
-            TimeList
+            TimeList,
+            TimeTag
         },
         data:()=> {
             return {

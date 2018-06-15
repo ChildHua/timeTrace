@@ -27,6 +27,13 @@ const store = new Vuex.Store({
             }
             return tds
         })(),
+        timeTags:[
+            {name:'工作',selected:false,color:'blue'},
+            {name:'学习',selected:false,color:'green'},
+            {name:'娱乐',selected:false,color:'yellow'},
+            {name:'休息',selected:false,color:'orange'},
+            {name:'运动',selected:false,color:'red'},
+        ],
         startIndex: [0, 0],
         endIndex: [0, 0],
         k: false
@@ -43,6 +50,7 @@ const store = new Vuex.Store({
             state.tds.map((tr) => {
                 tr.map((td) => {
                     td.class = 'white';
+                    td.selected=false;
                 })
             });
         },
@@ -62,9 +70,8 @@ const store = new Vuex.Store({
             for (let i = xScope[0]; i <= xScope[1]; i++) {
                 for (let j = yScope[0]; j <= yScope[1]; j++) {
                     if ((index[0] >= xScope[0] && index[0] <= xScope[1]) && (index[1] >= yScope[0] && index[1] <= yScope[1])) {
-                        state.tds[i][j].class = 'red'
-                    } else {
-                        state.tds[i][j].class = 'white'
+                        state.tds[i][j].class = 'red';
+                        state.tds[i][j].selected = true;
                     }
                 }
             }
