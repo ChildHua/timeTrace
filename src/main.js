@@ -21,18 +21,18 @@ const store = new Vuex.Store({
             for (let i = 0; i < y; i++) {
                 let tmp = [];
                 for (let j = 0; j < x; j++) {
-                    tmp.push({x:i, y:j, class:'white',selected:false})
+                    tmp.push({x:i, y:j, class:'white',selected:false,tagId:0,tagColor:null})
                 }
                 tds.push(tmp)
             }
             return tds
         })(),
         timeTags:[
-            {name:'工作',selected:false,color:'blue'},
-            {name:'学习',selected:false,color:'green'},
-            {name:'娱乐',selected:false,color:'yellow'},
-            {name:'休息',selected:false,color:'orange'},
-            {name:'运动',selected:false,color:'red'},
+            {id:1,name:'工作',selected:false,color:'blue'},
+            {id:2,name:'学习',selected:false,color:'green'},
+            {id:3,name:'娱乐',selected:false,color:'yellow'},
+            {id:4,name:'休息',selected:false,color:'orange'},
+            {id:5,name:'运动',selected:false,color:'red'},
         ],
         startIndex: [0, 0],
         endIndex: [0, 0],
@@ -53,6 +53,20 @@ const store = new Vuex.Store({
                     td.selected=false;
                 })
             });
+        },
+        markTag:function (state,tag) {
+            state.tds.map((tr)=>{
+                tr.map((td)=>{
+                    if (td.selected){
+                        console.log(tag.id)
+                        td.tagId = tag.id
+                        td.tagColor = tag.color
+                    }
+                })
+            })
+        },
+        getSelectedTd:function(state){
+
         },
         renderSelect(state, index) {
             if (!state.k) {

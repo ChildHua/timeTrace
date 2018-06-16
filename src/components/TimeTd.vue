@@ -1,5 +1,5 @@
 <template>
-    <td :class="props.class"  @mousedown.left="$emit('emit-down',[props.x,props.y])" @mouseup.left="$emit('emit-up',[props.x,props.y])"
+    <td :class="props.class" :style="{backgroundColor:props.tagColor}"  @mousedown.left="$emit('emit-down',[props.x,props.y])" @mouseup.left="$emit('emit-up',[props.x,props.y])"
         @mouseover="$emit('emit-over',[props.x,props.y])">
         <slot>
 
@@ -20,6 +20,9 @@
             }
         },
         methods: {
+
+        },
+        computed:{
         }
     }
 </script>
