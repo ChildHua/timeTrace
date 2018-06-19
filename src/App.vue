@@ -1,6 +1,6 @@
 <template>
-    <div id="app" @click="init">
-        <img src="./assets/logo.png">
+    <div id="app" @click.self="init">
+        <!--<img src="./assets/logo.png">-->
         <router-view/>
     </div>
 </template>
@@ -15,7 +15,7 @@
         },
         methods:{
             init:function () {
-                // this.$store.commit('init')
+                this.$store.commit('init')
             }
         }
     }
@@ -28,6 +28,6 @@
         -moz-osx-font-smoothing: grayscale;
         text-align: center;
         color: #2c3e50;
-        margin-top: 60px;
+        margin-top: 5px;
     }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="col-xs-8 col-sm-8">
+    <div class="col-xs-8 col-sm-8 fix">
         <table class="table table-bordered" style="float: right;">
             <tbody>
             <tr v-for="(timeTr,index) in tds">
@@ -35,6 +35,8 @@
                 this.$store.commit('renderSelect',index);
             },
             over: function (index) {
+                // console.log(index);
+                // index.push('over')
                 this.$store.commit('renderSelect',index);
             },
             end: function (index) {
@@ -73,5 +75,12 @@
         border-right: 1px solid #ddd;
         text-align: right;
         width:30px;
+    }
+    .fix{
+        position: fixed;
+        bottom: 0;
+        top: 85px;
+        left: 1px;
+        overflow-y: scroll;
     }
 </style>

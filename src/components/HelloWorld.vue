@@ -1,8 +1,10 @@
 <template>
     <div class="container">
         <div class="row" @click.self="init">
-            <!--<time-list :time-lists="[1,2,3]"></time-list>-->
-            <h1>{{ msg }}</h1>
+            <div class="title">
+                <h3>{{ title() }}</h3>
+                <p><span>已选择{{selected()}}小时</span></p>
+            </div>
             <time-table></time-table>
             <time-tag></time-tag>
         </div>
@@ -13,6 +15,7 @@
     import TimeList from './TimeList.vue';
     import TimeTable from './TimeTable.vue';
     import TimeTag from './TimeTag.vue';
+
     export default {
         name: 'HelloWorld',
         components: {
@@ -20,17 +23,31 @@
             TimeList,
             TimeTag
         },
-        data:()=> {
+        data: () => {
             return {
-                msg: 'Welcome to time mark app',
-                selectTime:[],
-                tdDown:false,
+                msg: 'TimeTrace',
+                selectTime: [],
+                tdDown: false,
             }
         },
-        methods:{
-            init:function (){
-                console.log(2);
+        methods: {
+            init: function () {
                 this.$store.commit('init');
+            },
+            title: function () {
+                let date = new Date();
+                return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
+            },
+            selected:function () {
+                let houre = 0;
+                this.$store.state.tds.map((tr)=>{
+                    tr.map((td)=>{
+                        if (td.selected){
+                            houre += 0.5
+                        }
+                    })
+                });
+                return houre
             }
         }
     }
@@ -57,4 +74,18 @@
     a {
         color: #42b983;
     }
+
+    .title{
+        position: fixed;
+        left: 0;
+        right: 0;
+    }
+    .row{
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
 </style>
