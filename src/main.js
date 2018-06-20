@@ -5,9 +5,9 @@ import Vuex from 'vuex'
 import axios from 'axios'
 import App from './App'
 import router from './router'
-
 import _ from 'lodash'
 import './assets/bootstrap-3.3.7-dist/css/bootstrap.min.css'
+
 Vue.config.productionTip = false;
 Vue.use(Vuex);
 
@@ -39,6 +39,11 @@ const store = new Vuex.Store({
         ],
         startIndex: [0, 0],
         endIndex: [0, 0],
+        dayIndex:()=>{
+            let date = new Date();
+            let month = date.getMonth()<9?'0'+(date.getMonth()+1):date.getMonth()+1;
+            return date.getFullYear() + '-' + month + '-' + date.getDate();
+        },
         k: false
     },
     mutations: {
@@ -63,7 +68,7 @@ const store = new Vuex.Store({
             state.tds.map((tr,trKey) => {
                 tr.map((td,tdKey) => {
                     if (td.selected) {
-                        selectedTd.push({y:trKey,x:tdKey,tagId:tag.id});//组装上传服务器数据
+                        selectedTd.push({hour:trKey,moment:tdKey,tag:tag.id,user:999,belong:state.dayIndex()});//组装上传服务器数据
 
                         td.tagId = tag.id;
                         td.tagColor = tag.color;
@@ -119,3 +124,13 @@ new Vue({
     components: {App},
     template: '<App/>'
 });
+
+axios.post(server+'/index',JSON.stringify({user:999,belong:store.state.dayIndex()}))
+    .then((r)=>{
+        r.data.map((block)=>{
+            store.state.tds[block['hour']][block['moment']].tagId = block.tag
+        });
+    })
+    .catch((r)=>{
+        console.log(r);
+    });

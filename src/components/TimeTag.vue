@@ -31,6 +31,6 @@
     .tag {
         position: fixed;
         right: 5px;
-        top: 80px;
+        top: 85px;
     }
 </style>

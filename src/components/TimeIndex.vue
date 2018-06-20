@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row" @click.self="init">
             <div class="title">
-                <h3>{{ title() }}</h3>
+                <h3>{{ this.$store.state.dayIndex() }}</h3>
                 <p><span>已选择{{selected()}}小时</span></p>
             </div>
             <time-table></time-table>
@@ -17,7 +17,7 @@
     import TimeTag from './TimeTag.vue';
 
     export default {
-        name: 'HelloWorld',
+        name: 'TimeIndex',
         components: {
             TimeTable,
             TimeList,
@@ -34,10 +34,6 @@
             init: function () {
                 this.$store.commit('init');
             },
-            title: function () {
-                let date = new Date();
-                return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
-            },
             selected:function () {
                 let houre = 0;
                 this.$store.state.tds.map((tr)=>{
@@ -51,6 +47,8 @@
             }
         }
     }
+
+
     document.body.onselectstart = function () {
         return false;
     };
