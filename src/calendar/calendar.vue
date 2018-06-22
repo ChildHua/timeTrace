@@ -730,7 +730,6 @@ export default {
                         begin=this.rangeBegin
                         end=this.rangeEnd
                     }
-                    // console.log("选中日期",begin,end)
                     this.$emit('select',begin,end)
                 }
                 this.render(this.year, this.month)
@@ -761,7 +760,6 @@ export default {
                 this.days[k1][k2].selected = true
                 this.day = this.days[k1][k2].day
                 this.today = [k1, k2]
-                console.log(this.day);
                 this.$emit('select',[this.year,this.zero?this.zeroPad(this.month + 1):this.month + 1,this.zero?this.zeroPad(this.days[k1][k2].day):this.days[k1][k2].day])
             }
         },
