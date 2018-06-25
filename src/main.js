@@ -14,7 +14,7 @@ Vue.use(Vuex);
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-let server = 'http://todoapp.test/api';
+let server = 'http://tt.webapp/api';
 /* eslint-disable no-new */
 const store = new Vuex.Store({
     state: {
@@ -45,9 +45,28 @@ const store = new Vuex.Store({
             let month = date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
             return date.getFullYear() + '-' + month + '-' + date.getDate();
         })(),
-        k: false
+        dayIndexArr:(()=>{
+            let date = [];
+            let dateObj = new Date();
+            date.push(dateObj.getFullYear());
+            date.push(dateObj.getMonth());
+            date.push(dateObj.getDate());
+        })(),
+        k: false,
+        auth:{
+            token:null,
+            user_id:0
+        }
     },
     mutations: {
+        logined(state,token){
+            state.auth.token = token;
+            localStorage.token = token;
+        },
+        loadUser(state,user){
+            state.auth.user_id = user.id
+        },
+
         setXScope(state, xScope) {
             state.startIndex = xScope
         },
@@ -128,15 +147,67 @@ const store = new Vuex.Store({
                 }
             }
         }
+    },
+    actions:{
+        logined({dispatch,commit}, token) {
+            return new Promise(function (resolve, reject) {
+                commit('logined', token);
+                axios.defaults.headers.common['Authorization'] = token
+                dispatch('profile').then(() => {
+                    resolve()
+                }).catch(() => {
+                    reject()
+                })
+            })
+        },
+        // 登录成功后使用 token 拉取用户的信息
+        profile({commit}) {
+            return new Promise(function (resolve, reject) {
+                axios.get('api/user', {}).then(respond => {
+                    if (respond.status == 200) {
+                        commit('loadUser', respond.data);
+                        resolve()
+                    } else {
+                        reject()
+                    }
+                })
+            })
+        },
     }
 });
 
+Vue.prototype.$axios = axios;
 new Vue({
     el: '#app',
     store,
     router,
     components: {App},
-    template: '<App/>'
+    template: '<App/>',
+    created() {
+        // 自定义的 axios 响应拦截器
+        this.$axios.interceptors.response.use((response) => {
+            // 判断一下响应中是否有 token，如果有就直接使用此 token 替换掉本地的 token。你可以根据你的业务需求自己编写更新 token 的逻辑
+            var token = response.headers.authorization
+            if (token) {
+                // 如果 header 中存在 token，那么触发 refreshToken 方法，替换本地的 token
+                this.$store.dispatch('refreshToken', token)
+            }
+            return response
+        }, (error) => {
+            switch (error.response.status) {
+
+                // 如果响应中的 http code 为 401，那么则此用户可能 token 失效了之类的，我会触发 logout 方法，清除本地的数据并将用户重定向至登录页面
+                case 401:
+                    return this.$store.dispatch('logout');
+                    break;
+                // 如果响应中的 http code 为 400，那么就弹出一条错误提示给用户
+                case 400:
+                    return this.$Message.error(error.response.data.error)
+                    break;
+            }
+            return Promise.reject(error)
+        })
+    }
 });
 
 function getBlock(user = 999, date = store.state.dayIndex) {

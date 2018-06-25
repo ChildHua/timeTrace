@@ -32,16 +32,16 @@
             TimeTag,
             Calendar,
         },
-        data: () => {
+        data: function() {
             return {
                 msg: 'TimeTrace',
                 selectTime: [],
                 tdDown: false,
                 calendar3:{
-                    display:"2018-6-21",
+                    display:this.$store.state.dayIndex,
                     show:false,
                     zero:true,
-                    value:[2018,6,21], //默认日期
+                    value:this.$store.state.dayIndexArr, //默认日期
                     lunar:true, //显示农历
                 },
             }
