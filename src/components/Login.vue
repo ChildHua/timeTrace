@@ -1,43 +1,75 @@
 <template>
-    <div class="container center" style="">
-        <img src="../assets/logo.png">
+    <div class="container " style="top: 20%;width: 100%;position: absolute;">
+        <h2 style="margin-bottom: 50px"><span>Time Trace</span></h2>
         <div class="row">
-            <div class="col-xs-12 col-sm-12">
-                <form class="form-horizontal">
-                    <div class="form-group">
-                        <label for="exampleInputEmail1" class="col-xs-2 col-sm-2 control-label">Email</label>
-                        <div class="col-xs-10 col-sm-10">
-                            <input type="email" class="form-control" placeholder="Email"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="exampleInputPassword1" class="col-xs-2 col-sm-2 control-label">Password</label>
-                        <div class="col-xs-10 col-sm-10">
-                            <input type="password" class="form-control" id="exampleInputPassword1"
-                                   placeholder="Password">
-                        </div>
-                    </div>
-                </form>
+            <div class="input-div">
+                <span class="glyphicon glyphicon-envelope input-i" aria-hidden="true"></span>
+                <input class="input-style" v-model="email"/>
             </div>
+
+
+            <div class="input-div">
+                <span class="glyphicon glyphicon-lock input-i" aria-hidden="true"></span>
+                <input class="input-style" v-model="password"/>
+            </div>
+            <button class="btn btn-info btn-block login-btn" @click="login"> sign in</button>
         </div>
+
         <!--<p>login page</p>-->
     </div>
 </template>
 
 <script>
+    let server = 'http://tt.webapp/api';
+
     export default {
-        name: "login"
+        name: "login",
+        data() {
+            return {
+                email:null,
+                password:null
+            }
+        },
+        methods:{
+            login:function () {
+                this.$axios.post(server+'/auth/login',{email:this.email,password:this.password})
+                    .then((r)=>{
+                        if (r.status === 201){
+                            this.$store.dispatch('logined',r.data.token);
+                            this.$router.push('/')
+                        }
+                    })
+                    .catch((r)=>{
+                        console.log(r)
+                    })
+            }
+        },
+        beforeCreate:function () {
+            if (localStorage.token){
+                this.$router.push('/')
+            }
+        }
     }
 </script>
 
 <style scoped>
+    .input-div {
+        border-bottom: 1px red solid;
+        width: 80%;
+        margin: auto;
+        margin-bottom: 30px;
+    }
 
-    .center{
-        margin: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+    .input-i {
+        float: left
+    }
+
+    .input-style {
+        width: 80%;
+        border: 0;
+    }
+    .login-btn{
+        width: 80%;
+        margin: auto;
     }
 </style>

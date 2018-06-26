@@ -10,7 +10,6 @@
         name: 'App',
         data:function() {
             return {
-                aTest:this.$store.state.tds
             }
         },
         methods:{

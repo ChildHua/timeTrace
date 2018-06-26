@@ -65,6 +65,11 @@ const store = new Vuex.Store({
         },
         loadUser(state,user){
             state.auth.user_id = user.id
+            localStorage.user = user.id
+        },
+        logout(state){
+            state.auth.user_id = null
+            // localStorage.removeItem('token')
         },
 
         setXScope(state, xScope) {
@@ -97,7 +102,7 @@ const store = new Vuex.Store({
             state.tds.map((tr, trKey) => {
                 tr.map((td, tdKey) => {
                     if (td.selected) {
-                        selectedTd.push({hour: trKey, moment: tdKey, tag: tag.id, user: 999, belong: state.dayIndex});//组装上传服务器数据
+                        selectedTd.push({hour: trKey, moment: tdKey, tag: tag.id, user: state.auth.user_id, belong: state.dayIndex});//组装上传服务器数据
 
                         td.tagId = tag.id;
                         td.tagColor = tag.color;
@@ -118,9 +123,11 @@ const store = new Vuex.Store({
         getSelectedTd: function (state) {
 
         },
-        getTdData: function (state, postData) {
-            this.commit('init');
-            getBlock(postData.user, postData.date)
+
+        renderTdTag:function (state, data) {
+            data.map((block) => {
+                state.tds[block['hour']][block['moment']].tagId = block.tag
+            });
         },
         renderSelect(state, index) {
             if (!state.k) {
@@ -152,7 +159,7 @@ const store = new Vuex.Store({
         logined({dispatch,commit}, token) {
             return new Promise(function (resolve, reject) {
                 commit('logined', token);
-                axios.defaults.headers.common['Authorization'] = token
+                axios.defaults.headers.common['Authorization'] = token;
                 dispatch('profile').then(() => {
                     resolve()
                 }).catch(() => {
@@ -161,16 +168,35 @@ const store = new Vuex.Store({
             })
         },
         // 登录成功后使用 token 拉取用户的信息
-        profile({commit}) {
+        profile({commit,dispatch}) {
             return new Promise(function (resolve, reject) {
-                axios.get('api/user', {}).then(respond => {
-                    if (respond.status == 200) {
+                axios.get(server+'/user', {}).then(respond => {
+                    if (respond.status === 200) {
                         commit('loadUser', respond.data);
+                        dispatch('loadTd');
                         resolve()
                     } else {
                         reject()
                     }
                 })
+            })
+        },
+        loadTd({commit,state}){
+            return new Promise(function (resolve, reject) {
+                axios.post(server+'/index',JSON.stringify({user:state.auth.user_id,belong:state.dayIndex}))
+                    .then(r=>{
+                        commit('init');
+                        commit('renderTdTag',r.data);
+                    })
+                    .catch(r=>{
+                        console.log(r);
+                    })
+            })
+        },
+        logout({commit}) {
+            return new Promise(function (resolve, reject) {
+                commit('logout');
+                router.push('/login')
             })
         },
     }
@@ -185,9 +211,13 @@ new Vue({
     template: '<App/>',
     created() {
         // 自定义的 axios 响应拦截器
+        if (localStorage.token){//刷新页面时判断token
+            this.$axios.defaults.headers.common['Authorization'] = localStorage.token
+            this.$store.commit('loadUser',{id:localStorage.user})
+        }
         this.$axios.interceptors.response.use((response) => {
             // 判断一下响应中是否有 token，如果有就直接使用此 token 替换掉本地的 token。你可以根据你的业务需求自己编写更新 token 的逻辑
-            var token = response.headers.authorization
+            let token = response.headers.authorization;
             if (token) {
                 // 如果 header 中存在 token，那么触发 refreshToken 方法，替换本地的 token
                 this.$store.dispatch('refreshToken', token)
@@ -209,18 +239,4 @@ new Vue({
         })
     }
 });
-
-function getBlock(user = 999, date = store.state.dayIndex) {
-    axios.post(server + '/index', JSON.stringify({user: user, belong: date}))
-        .then((r) => {
-            r.data.map((block) => {
-                store.state.tds[block['hour']][block['moment']].tagId = block.tag
-            });
-        })
-        .catch((r) => {
-            console.log(r);
-        });
-}
-
-getBlock();
 
