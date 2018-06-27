@@ -35,6 +35,8 @@
                 this.$axios.post(this.$store.state.serverURL+'/auth/login',{email:this.email,password:this.password})
                     .then((r)=>{
                         if (r.status === 201){
+                            localStorage.token = null;
+                            localStorage.user = null;
                             this.$store.dispatch('logined',r.data.token);
                             this.$router.push('/')
                         }
