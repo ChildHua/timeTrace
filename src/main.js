@@ -18,6 +18,7 @@ let server = 'http://tt.webapp/api';
 /* eslint-disable no-new */
 const store = new Vuex.Store({
     state: {
+        serverURL:process.env.NODE_ENV === 'production'?'http://120.79.40.223:801/api':'http://tt.webapp/api',
         tds: (() => {
             let tds = [];
             let x = 2;
@@ -112,7 +113,7 @@ const store = new Vuex.Store({
                 })
             });
             console.log(JSON.stringify(selectedTd));
-            axios.post(server + '/markTag', JSON.stringify(selectedTd))
+            axios.post(state.serverURL + '/markTag', JSON.stringify(selectedTd))
                 .then((r) => {
                     console.log(r)
                 })
@@ -168,9 +169,9 @@ const store = new Vuex.Store({
             })
         },
         // 登录成功后使用 token 拉取用户的信息
-        profile({commit,dispatch}) {
+        profile({commit,dispatch,state}) {
             return new Promise(function (resolve, reject) {
-                axios.get(server+'/user', {}).then(respond => {
+                axios.get(state.serverURL+'/user', {}).then(respond => {
                     if (respond.status === 200) {
                         commit('loadUser', respond.data);
                         dispatch('loadTd');
@@ -183,7 +184,7 @@ const store = new Vuex.Store({
         },
         loadTd({commit,state}){
             return new Promise(function (resolve, reject) {
-                axios.post(server+'/index',JSON.stringify({user:state.auth.user_id,belong:state.dayIndex}))
+                axios.post(state.serverURL+'/index',JSON.stringify({user:state.auth.user_id,belong:state.dayIndex}))
                     .then(r=>{
                         commit('init');
                         commit('renderTdTag',r.data);
@@ -201,7 +202,6 @@ const store = new Vuex.Store({
         },
     }
 });
-
 Vue.prototype.$axios = axios;
 new Vue({
     el: '#app',

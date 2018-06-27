@@ -32,7 +32,7 @@
         },
         methods:{
             login:function () {
-                this.$axios.post(server+'/auth/login',{email:this.email,password:this.password})
+                this.$axios.post(this.$store.state.serverURL+'/auth/login',{email:this.email,password:this.password})
                     .then((r)=>{
                         if (r.status === 201){
                             this.$store.dispatch('logined',r.data.token);
