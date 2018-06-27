@@ -18,7 +18,7 @@ let server = 'http://tt.webapp/api';
 /* eslint-disable no-new */
 const store = new Vuex.Store({
     state: {
-        serverURL:process.env.NODE_ENV === 'production'?'http://120.79.40.223:801/api':'http://tt.webapp/api',
+        serverURL:process.env.NODE_ENV === 'production'?'http://120.79.40.223:800/api':'http://tt.webapp/api',
         tds: (() => {
             let tds = [];
             let x = 2;
