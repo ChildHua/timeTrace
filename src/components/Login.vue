@@ -47,7 +47,7 @@
             }
         },
         beforeCreate:function () {
-            if (localStorage.token){
+            if (localStorage.token !== 0 && localStorage.token !==null && localStorage.token){
                 this.$router.push('/')
             }
         }
