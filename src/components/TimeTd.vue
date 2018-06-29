@@ -60,4 +60,5 @@
         background: rgba(0,0,0,0.3);
         filter: blur(10px);
     }
+
 </style>

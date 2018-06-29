@@ -81,6 +81,6 @@
         bottom: 0;
         top: 85px;
         left: 1px;
-        overflow-y: scroll;
+        overflow-y: auto;
     }
 </style>

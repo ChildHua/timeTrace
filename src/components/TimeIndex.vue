@@ -1,23 +1,27 @@
 <template>
-        <div class="container">
-            <div class="row" @click.self="init">
-                <div class="title">
-                    <h3>Time Trace</h3>
-                    <p @click="openByDrop($event)">{{calendar3.display}}</p>
-                    <p v-if="selected() > 0"><span>已选择{{selected()}}小时</span></p>
-                </div>
-                <time-table></time-table>
-                <time-tag></time-tag>
-            </div>
+    <base-page>
+        <template slot="title">
+            <h3>Time Trace
+                <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"  x="0px" y="0px"
+	 viewBox="0 0 58 58" class="chart-icon" xml:space="preserve" @click="goChart">
+<g>
+	<path style="fill:#F0785A;" d="M31,26.962h26.924C56.94,12.541,45.421,1.022,31,0.038V26.962z"/>
+	<path style="fill:#F0C419;" d="M50.386,48.615c4.343-4.71,7.151-10.858,7.614-17.653H32.733L50.386,48.615z"/>
+	<path style="fill:#556080;" d="M27,28.134V0.038C11.918,1.067,0,13.619,0,28.962C0,36.25,2.695,42.905,7.134,48L27,28.134z"/>
+	<path style="fill:#71C285;" d="M28.414,32.376L9.962,50.828c5.095,4.439,11.75,7.134,19.038,7.134
+		c6.99,0,13.396-2.479,18.401-6.599L28.414,32.376z"/>
+</g>
+</svg>
+            </h3>
+            <p v-if="selected() > 0"><span>已选择{{selected()}}小时</span></p>
 
-            <transition name="fade">
-                <div class="calendar-dropdown" :style="{'left':calendar3.left+'px','top':calendar3.top+'px'}"
-                     v-show="calendar3.show">
-                    <calendar :zero="calendar3.zero" :lunar="calendar3.lunar" :value="calendar3.value"
-                              :begin="calendar3.begin" :end="calendar3.end" @select="choseDate"></calendar>
-                </div>
-            </transition>
-        </div>
+        </template>
+
+        <time-table></time-table>
+        <time-tag></time-tag>
+    </base-page>
+
+
 </template>
 
 <script>
@@ -25,10 +29,12 @@
     import TimeTable from './TimeTable.vue';
     import TimeTag from './TimeTag.vue';
     import Calendar from '../calendar/calendar.vue';
+    import BasePage from "./BasePage.vue";
 
     export default {
         name: 'TimeIndex',
         components: {
+            BasePage,
             TimeTable,
             TimeList,
             TimeTag,
@@ -39,19 +45,10 @@
                 msg: 'TimeTrace',
                 selectTime: [],
                 tdDown: false,
-                calendar3: {
-                    display: this.$store.state.dayIndex,
-                    show: false,
-                    zero: true,
-                    value: this.$store.state.dayIndexArr, //默认日期
-                    lunar: true, //显示农历
-                },
             }
         },
         methods: {
-            init: function () {
-                this.$store.commit('cleanSelect');
-            },
+
             selected: function () {
                 let houre = 0;
                 this.$store.state.tds.map((tr) => {
@@ -63,29 +60,17 @@
                 });
                 return houre
             },
-            choseDate: function (value) {
-                this.calendar3.show = false;
-                this.calendar3.value = value;
-                this.calendar3.display = value.join("-");
-                this.$store.state.dayIndex = this.calendar3.display;
-                // this.$store.commit('getTdData', {user: 999, date: this.calendar3.display})
-                this.$store.dispatch('loadTd');
-            },
-            openByDrop(e) {
-                this.calendar3.show = true;
-                this.calendar3.top = e.target.offsetTop;
-                e.stopPropagation();
-                window.setTimeout(() => {
-                    document.addEventListener("click", (e) => {
-                        this.calendar3.show = false;
-                        document.removeEventListener("click", () => {
-                        }, false);
-                    }, false);
-                }, 1000)
-            },
+            goChart() {
+                this.$router.push('/chart')
+            }
         },
-        beforeMount:function () {
-            this.$store.dispatch('loadTd');
+        beforeCreate: function () {
+
+            if (localStorage.token === undefined || localStorage.token === null) {
+                this.$router.push('/login');
+            } else {
+                this.$store.dispatch('loadTd');
+            }
         }
     }
 
@@ -139,42 +124,10 @@
 
     }
 
-    /*下拉框*/
-    .calendar-dropdown {
-        background: #fff;
+    .chart-icon {
+        width: 5%;
         position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        margin: auto;
-        padding: 20px;
-        border: 1px solid #eee;
-        border-radius: 2px;
-    }
-
-    /*弹出框*/
-    .calendar-dialog {
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-    }
-
-    .calendar-dialog-mask {
-        background: rgba(255, 255, 255, .5);
-        width: 100%;
-        height: 100%;
-    }
-
-    .calendar-dialog-body {
-        background: #fff;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        padding: 20px;
-        border: 1px solid #eee;
-        border-radius: 2px;
+        right: 8%;
+        max-width: 32px;
     }
 </style>

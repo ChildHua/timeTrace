@@ -6,11 +6,14 @@ import axios from 'axios'
 import App from './App'
 import router from './router'
 import _ from 'lodash'
+import Viser from 'viser-vue'
+
 
 import './assets/bootstrap-3.3.7-dist/css/bootstrap.min.css'
 // import 'vuetify/dist/vuetify.min.css'
 Vue.config.productionTip = false;
 Vue.use(Vuex);
+Vue.use(Viser)
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
@@ -53,6 +56,7 @@ const store = new Vuex.Store({
             date.push(dateObj.getMonth());
             date.push(dateObj.getDate());
         })(),
+
         k: false,
         auth:{
             token:null,
@@ -68,9 +72,10 @@ const store = new Vuex.Store({
             state.auth.user_id = user.id
             localStorage.user = user.id
         },
-        logout(state){
-            state.auth.user_id = null
-            // localStorage.removeItem('token')
+        logouted(state){
+            state.auth.user_id = null;
+            state.auth.token = null;
+            localStorage.removeItem('token');
         },
 
         setXScope(state, xScope) {
@@ -196,8 +201,7 @@ const store = new Vuex.Store({
         },
         logout({commit}) {
             return new Promise(function (resolve, reject) {
-                commit('logout');
-                router.push('/login')
+                commit('logouted');
             })
         },
     }
@@ -220,7 +224,7 @@ new Vue({
             let token = response.headers.authorization;
             if (token) {
                 // 如果 header 中存在 token，那么触发 refreshToken 方法，替换本地的 token
-                this.$store.dispatch('refreshToken', token)
+                this.$store.dispatch('refreshToken', token);
             }
             return response
         }, (error) => {
@@ -228,11 +232,15 @@ new Vue({
 
                 // 如果响应中的 http code 为 401，那么则此用户可能 token 失效了之类的，我会触发 logout 方法，清除本地的数据并将用户重定向至登录页面
                 case 401:
-                    return this.$store.dispatch('logout');
+                    this.$store.dispatch('logout');
+                    this.$router.push('/login');
                     break;
                 // 如果响应中的 http code 为 400，那么就弹出一条错误提示给用户
                 case 400:
-                    return this.$Message.error(error.response.data.error)
+                    this.$Message.error(error.response.data.error);
+                    break;
+                case 429:
+                    console.log(33);
                     break;
             }
             return Promise.reject(error)

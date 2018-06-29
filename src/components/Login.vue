@@ -47,7 +47,7 @@
             }
         },
         beforeCreate:function () {
-            if (localStorage.token){
+            if (localStorage.token!=null){
                 this.$router.push('/')
             }
         }

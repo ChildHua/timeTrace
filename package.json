@@ -13,8 +13,10 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@antv/data-set": "^0.8.9",
     "axios": "^0.18.0",
     "lodash": "^4.17.10",
+    "viser-vue": "^2.2.5",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
