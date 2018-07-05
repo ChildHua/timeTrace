@@ -12,7 +12,7 @@
                 <span class="glyphicon glyphicon-lock input-i" aria-hidden="true"></span>
                 <input type="password" class="input-style" v-model="password"/>
             </div>
-            <button class="btn btn-info btn-block login-btn" @click="login"> sign in</button>
+            <button class="btn btn-info btn-block login-btn" @click="login($event)"> sign in</button>
             <button class="btn btn-info btn-block login-btn" @click="register"> sign up</button>
         </div>
 
@@ -32,7 +32,12 @@
             }
         },
         methods:{
-            login:function () {
+            login:function (event) {
+                // console.log(event);
+                event.target.disabled= true;
+                setTimeout(function (event) {
+                    event.target.disabled = false
+                },3000,event);
                 this.$axios.post(this.$store.state.serverURL+'/auth/login',{email:this.email,password:this.password})
                     .then((r)=>{
                         if (r.status === 201){
@@ -42,8 +47,10 @@
                             this.$router.push('/')
                         }
                     })
-                    .catch((r)=>{
-                        console.log(r)
+                    .catch(r=>{
+                        alert(r.response.data.error);
+                        console.log(r.response.data.error);
+                        // console.log(3);
                     })
             },
             register:function () {
