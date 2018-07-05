@@ -10,9 +10,10 @@
 
             <div class="input-div">
                 <span class="glyphicon glyphicon-lock input-i" aria-hidden="true"></span>
-                <input class="input-style" v-model="password"/>
+                <input type="password" class="input-style" v-model="password"/>
             </div>
             <button class="btn btn-info btn-block login-btn" @click="login"> sign in</button>
+            <button class="btn btn-info btn-block login-btn" @click="register"> sign up</button>
         </div>
 
         <!--<p>login page</p>-->
@@ -44,6 +45,17 @@
                     .catch((r)=>{
                         console.log(r)
                     })
+            },
+            register:function () {
+                this.$axios.post(this.$store.state.serverURL+'/auth/register',{email:this.email,password:this.password})
+                    .then((r)=>{
+                        if (r.status === 200){
+                            console.log('success');
+                        }
+                    })
+                    .catch(r=>{
+                        console.log(r)
+                    })
             }
         },
         beforeCreate:function () {
@@ -73,5 +85,6 @@
     .login-btn{
         width: 80%;
         margin: auto;
+        margin-top: 10px;
     }
 </style>
