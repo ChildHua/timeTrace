@@ -58,6 +58,17 @@
                 <v-coord type="theta" :radius="0.75" :innerRadius="0.3"/>
             </v-chart>
         </div>
+
+        <div>
+            <v-chart :forceFit="true" :height="height" :data="monthData" :aaa="monthChartData" :scale="scale">
+                <v-tooltip :showTitle="false" dataKey="item*percent"/>
+                <v-axis/>
+                <v-legend dataKey="item"/>
+                <v-pie position="percent" color="item" :v-style="pieStyle" :label="labelConfig"/>
+                <!--<v-coord type="theta" />-->
+                <v-coord type="theta" :radius="0.75" :innerRadius="0.3"/>
+            </v-chart>
+        </div>
     </base-page>
 </template>
 <script>
@@ -66,28 +77,20 @@
 
 
     const DataSet = require('@antv/data-set');
-    const sourceData = [
-        {item: '事例一', count: 40},
-        {item: '事例二', count: 21},
-        {item: '事例三', count: 17},
-        {item: '事例四', count: 13},
-        {item: '事例五', count: 9}
-    ];
+
     const scale = [{
         dataKey: 'percent',
         min: 0,
         formatter: '.0%',
     }];
-    const dv = new DataSet.View().source(sourceData);
+    const dv = new DataSet.View().source([]);
     dv.transform({
         type: 'percent',
         field: 'count',
         dimension: 'item',
         as: 'percent'
     });
-    const data = dv.rows;
 
-    console.log(data.rows={});
 
     export default {
         name: 'chart',
@@ -108,6 +111,7 @@
                         shadowColor: 'rgba(0, 0, 0, .45)'
                     }
                 }],
+                monthData:[]
             }
         },
         computed:{
@@ -120,7 +124,6 @@
                 this.$store.state.tds.map(tr=>{
                     tr.map(td=>{
                         let markIndex = _.findIndex(charSource,{id:td.tagId});
-                        console.log(markIndex);
                         charSource[markIndex].count++;
                     })
                 });
@@ -133,6 +136,33 @@
                 });
                 return dv.rows;
             },
+            monthChartData:function () {
+                let monthData = [];
+                let dvData = [];
+                this.$store.state.timeTags.map(tag=>{
+                    monthData.push({item:tag.name,id:tag.id,count:0})
+                });
+                this.$axios.get(this.$store.state.serverURL+'/monthStat'+objToRestFul({user:localStorage.user,month:(new Date()).getMonth()+1}))
+                    .then(r=>{
+                        r.data.map(tag=>{
+                            let markIndex = _.findIndex(monthData,{id:tag});
+                            monthData[markIndex].count++;
+                        });
+
+                        const av = new DataSet.View().source(monthData);
+                        av.transform({
+                            type: 'percent',
+                            field: 'count',
+                            dimension: 'item',
+                            as: 'percent'
+                        });
+                        console.log(av.rows);
+                        this.monthData =  av.rows
+                    })
+                    .catch(r=>{
+                        console.log(r);
+                    });
+            }
         },
         components: {
             BasePage
@@ -142,10 +172,19 @@
             goHome:function () {
                 this.$router.push('/')
             }
+
         },
         beforeCreate: function () {
 
         }
+    }
+
+    function objToRestFul(obj) {
+        let path = '';
+        _.forIn(obj,function(v,k){
+           path += '/'+k+'/'+v
+        });
+        return path
     }
 </script>
 

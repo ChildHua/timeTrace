@@ -56,7 +56,6 @@ const store = new Vuex.Store({
             date.push(dateObj.getMonth());
             date.push(dateObj.getDate());
         })(),
-
         k: false,
         auth:{
             token:null,
